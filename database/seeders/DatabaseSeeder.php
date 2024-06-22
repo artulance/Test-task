@@ -9,15 +9,24 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Primera ejecución php artisan migrate --seed
+     * Al usar sql pregunta si queremos crear la base de datos indicamos que si.
+     * Realizará la migración y los seeds
      */
     public function run(): void
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+        $this->call([
+            UserSeeder::class,
+            GroupTask::class,
+            Status::class,
+            Periodicity::class,
+            Task::class,
         ]);
     }
 }
