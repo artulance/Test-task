@@ -45,4 +45,10 @@ class Task extends Model
         return $this->belongsTo(Status::class,"status");
     }
 
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['user_id'] = auth()->id();
+    
+        return $data;
+    }
 }

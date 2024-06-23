@@ -29,7 +29,12 @@ class TaskResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Hidden::make('user_id'),
+                Forms\Components\Hidden::make('user_id')
+                ->default(
+                    auth()->id()
+                ),
+                Forms\Components\Hidden::make('status')
+                ->default(1),
                 Forms\Components\TextInput::make('name')
                 ->label('Nombre') 
                 ->required(),
@@ -71,53 +76,48 @@ class TaskResource extends Resource
         $statuses = Status::all()->pluck('name', 'id')->toArray();
         return $table
             ->columns([
-                Tables\Columns\Layout\Split::make([
-                    Tables\Columns\Layout\Stack::make([
-                        Tables\Columns\TextColumn::make('name')
-                            ->searchable()
-                            ->sortable()
-                            ->label('Nombre'),
-
-                        Tables\Columns\TextColumn::make('groupTask.name') 
+         
+                    Tables\Columns\TextColumn::make('name')
                         ->searchable()
-                        ->sortable(),
-                       
-                     
-                    ]),
-                    
-                    Tables\Columns\Layout\Stack::make([
-                        Tables\Columns\IconColumn::make('status') 
-                        ->icon(fn (string $state): string => match ($state) {
-                            '1' => 'heroicon-o-pencil',
-                            '2' => 'heroicon-o-clock',
-                            '3' => 'heroicon-o-check-circle',
-                        })
-                        // ->color(fn (string $state): string => match ($state) {
-                        //     '1' => 'info',
-                        //     '2' => 'warning',
-                        //     '3' => 'success',
-                        //     default => 'gray',
-                        // })
-                        ->label('Estado')
-                        ->color(fn (Model $record) => $record->currentStatus->color)
-                        ->sortable(),
-                        Tables\Columns\SelectColumn::make('status') 
-                        // ->options([
-                        //     '1' => 'Abierta',
-                        //     '2' => 'Pendiente',
-                        //     '3' => 'Cerrada',
-                        // ])
-                        // ->options(fn (Model $record) => [$record->currentStatus->id => $record->currentStatus->name])
-                        ->options($statuses)
-                        ->rules(['required']),
+                        ->sortable()
+                        ->label('Nombre'),
 
+                    Tables\Columns\TextColumn::make('groupTask.name') 
+                    ->label('Grupo')
+                    ->searchable()
+                    ->sortable(),
+                    Tables\Columns\IconColumn::make('status') 
+                    ->icon(fn (string $state): string => match ($state) {
+                        '1' => 'heroicon-o-pencil',
+                        '2' => 'heroicon-o-clock',
+                        '3' => 'heroicon-o-check-circle',
+                    })
+                    // ->color(fn (string $state): string => match ($state) {
+                    //     '1' => 'info',
+                    //     '2' => 'warning',
+                    //     '3' => 'success',
+                    //     default => 'gray',
+                    // })
+                    ->label('Estado')
+                    ->color(fn (Model $record) => $record->currentStatus->color)
+                    ->sortable(),
+                    Tables\Columns\TextColumn::make('due_date')
+                    ->view('filament.tables.columns.date')
+                    ->label('fecha de vencimiento')
+                    ->sortable(),
+                   
+                    Tables\Columns\SelectColumn::make('status') 
+                    // ->options([
+                    //     '1' => 'Abierta',
+                    //     '2' => 'Pendiente',
+                    //     '3' => 'Cerrada',
+                    // ])
+                    // ->options(fn (Model $record) => [$record->currentStatus->id => $record->currentStatus->name])
+                    ->options($statuses)
+                    ->label('Estado')
+                    ->rules(['required']),
 
-                     
-                    ]),
-               
-  
-                ]),
-            ])
+            ])->defaultSort('due_date', 'asc')->defaultSort('status', 'asc')
             ->filters([
                 //
             ])
