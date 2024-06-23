@@ -52,6 +52,11 @@ Ejecuta el servidor de desarrollo, la salida dará la dirección que tendrá la 
 ```sh
 php artisan serve
 ```
+Los test están hechos con phpunit, se ejecutan con:
+
+```sh
+php artisan test
+```
 
 ### Modelo 
 
